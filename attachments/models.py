@@ -54,6 +54,7 @@ class AttachedImage(models.Model):
         return self.name
 
     def save(self,*args,**kwargs):
+        super(AttachedImage,self).save(*args,**kwargs)
         if self.display_url != self.image.url:
             origfilename = settings.MEDIA_ROOT+unicode(self.image)
             base,ext = origfilename.rsplit('.',1)
@@ -61,8 +62,6 @@ class AttachedImage(models.Model):
             im = Image.open(origfilename)
             im = im.resize(imrect(im.size,(float(self.display),)*2))
             im.save(dispfilename)
-
-        super(AttachedImage,self).save(*args,**kwargs)
 
     @property
     def display_url(self):
