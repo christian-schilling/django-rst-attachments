@@ -4,7 +4,7 @@ from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from os import path
-import Image
+from imagekit.models import ImageModel
 
 def imrect(size, target):
     """
@@ -35,14 +35,18 @@ class AttachedFile(models.Model):
             self.file.url,
         )
 
-class AttachedImage(models.Model):
+class AttachedImage(ImageModel):
     name = models.CharField(max_length=255)
     link_to = models.URLField(blank=True)
-    display = models.PositiveIntegerField(default=1,choices=(
-        (1 ,_('full')),
-        (100,_('100x100')),
-        (200,_('200x200')),
-        (300,_('300x300')),
+    size = models.CharField(default='small',max_length=20,choices=(
+        ('small',_('small')),
+        ('medium',_('medium')),
+        ('big',_('big')),
+    ))
+    format = models.CharField(default='landscape',max_length=20,choices=(
+        ('square',_('square')),
+        ('landscape',_('landscape')),
+        ('portrait',_('portrait')),
     ))
     image = models.ImageField(upload_to=settings.MEDIA_PREFIX+'/attachments/images/%Y/%m')
 
@@ -50,26 +54,17 @@ class AttachedImage(models.Model):
     object_id = models.PositiveIntegerField()
     attached_to = generic.GenericForeignKey()
 
+    class IKOptions:
+        spec_module = 'attachments.specs'
+        cache_dir = 'attachments/cache'
+        image_field = 'image'
+
     def __unicode__(self):
         return self.name
 
-    def save(self,*args,**kwargs):
-        super(AttachedImage,self).save(*args,**kwargs)
-        if self.display_url != self.image.url:
-            origfilename = settings.MEDIA_ROOT+unicode(self.image)
-            base,ext = origfilename.rsplit('.',1)
-            dispfilename = u'%s_disp.%s' % (base,ext)
-            im = Image.open(origfilename)
-            im = im.resize(imrect(im.size,(float(self.display),)*2))
-            im.save(dispfilename)
-
     @property
     def display_url(self):
-        if self.display>20:
-            base,ext = self.image.url.rsplit('.',1)
-            return u'%s_disp.%s' % (base,ext)
-        else:
-            return self.image.url
+        return getattr(self,'image_%s_%s'%(self.size,self.format)).url()
 
     @property
     def rst_line(self):
