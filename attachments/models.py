@@ -48,6 +48,10 @@ class AttachedImage(ImageModel):
         ('landscape',_('landscape')),
         ('portrait',_('portrait')),
     ))
+    float = models.CharField(max_length=20,default='left',choices=(
+        ('left',_('left')),
+        ('right',_('right')),
+    ))
     image = models.ImageField(upload_to=settings.MEDIA_PREFIX+'/attachments/images/%Y/%m')
 
     content_type = models.ForeignKey(ContentType)
@@ -68,10 +72,11 @@ class AttachedImage(ImageModel):
 
     @property
     def rst_line(self):
-        line = u'.. |%s| image:: %s\n :alt: %s\n' % (
+        line = u'.. |%s| image:: %s\n :alt: %s\n :class: %s\n' % (
             self.name,
             self.display_url,
             self.name,
+            self.float,
         )
         return line + u'.. _%s: %s\n' % (
             self.name,
