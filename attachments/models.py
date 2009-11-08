@@ -64,7 +64,7 @@ class AttachedImage(ImageModel):
 
     @property
     def display_url(self):
-        return getattr(self,'image_%s_%s'%(self.size,self.format)).url()
+        return getattr(self,'image_%s_%s'%(self.size,self.format)).url
 
     @property
     def rst_line(self):
