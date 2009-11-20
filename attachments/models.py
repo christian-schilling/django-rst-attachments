@@ -38,21 +38,20 @@ class AttachedFile(models.Model):
 class AttachedImage(ImageModel):
     name = models.CharField(max_length=255)
     link_to = models.URLField(blank=True)
-    size = models.CharField(default='small',max_length=20,choices=(
-        ('small',_('small')),
-        ('medium',_('medium')),
-        ('big',_('big')),
-    ))
-    format = models.CharField(default='landscape',max_length=20,choices=(
-        ('square',_('square')),
-        ('landscape',_('landscape')),
-        ('portrait',_('portrait')),
-    ))
+    rows = models.PositiveIntegerField(default=5)
+    columns = models.PositiveIntegerField(default=4)
     float = models.CharField(max_length=20,default='left',choices=(
         ('left',_('left')),
         ('right',_('right')),
     ))
     image = models.ImageField(upload_to=settings.MEDIA_PREFIX+'/attachments/images/%Y/%m')
+
+    @property
+    def image_height(self):
+        return self.rows*18 - 8
+    @property
+    def image_width(self):
+        return 26*self.columns+16*(self.columns-1)
 
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
@@ -68,7 +67,7 @@ class AttachedImage(ImageModel):
 
     @property
     def display_url(self):
-        return getattr(self,'image_%s_%s'%(self.size,self.format)).url
+        return self.scaled.url
 
     @property
     def rst_line(self):
