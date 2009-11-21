@@ -12,6 +12,7 @@ class DynamicResize(processors.ImageProcessor):
         return TmpResize.process(img,fmt,obj)
 
 class Display(ImageSpec):
+    quality = 95
     pre_cache = True
     access_as = 'scaled'
     processors = [DynamicResize]
