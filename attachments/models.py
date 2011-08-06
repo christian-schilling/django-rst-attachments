@@ -19,7 +19,7 @@ def imrect(size, target):
 
 class AttachedFile(models.Model):
     name = models.CharField(max_length=255)
-    file = models.FileField(upload_to=settings.MEDIA_PREFIX+'/attachments/files/%Y/%m')
+    file = models.FileField(upload_to=getattr(settings,'RST_ATTACHEMENTS_FILE_PATH',u'attachments/files/%Y/%m'))
 
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
@@ -44,7 +44,7 @@ class AttachedImage(ImageModel):
         ('left',_('left')),
         ('right',_('right')),
     ))
-    image = models.ImageField(upload_to=settings.MEDIA_PREFIX+'/attachments/images/%Y/%m')
+    image = models.ImageField(upload_to=getattr(settings,'RST_ATTACHEMNTS_IMAGE_PATH','attachments/images/%Y/%m'))
 
     @property
     def image_height(self):

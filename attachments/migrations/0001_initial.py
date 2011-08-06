@@ -15,7 +15,7 @@ class Migration:
         db.create_table('attachments_attachedfile', (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
             ('name', models.CharField(max_length=255)),
-            ('file', models.FileField(upload_to=settings.MEDIA_PREFIX+'/attachments/files/%Y/%m')),
+            ('file', models.FileField(upload_to='attachments/files/%Y/%m')),
             ('content_type', models.ForeignKey(ContentType)),
             ('object_id', models.PositiveIntegerField()),
         ))
@@ -29,7 +29,7 @@ class Migration:
             ('name', models.CharField(max_length=255)),
             ('link_to', models.URLField(blank=True)),
             ('display', models.PositiveIntegerField(default=1)),
-            ('image', models.ImageField(upload_to=settings.MEDIA_PREFIX+'/attachments/images/%Y/%m')),
+            ('image', models.ImageField(upload_to='attachments/images/%Y/%m')),
             ('content_type', models.ForeignKey(ContentType)),
             ('object_id', models.PositiveIntegerField()),
         ))
