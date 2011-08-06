@@ -2,7 +2,7 @@ from django.conf import settings
 import models
 from django.contrib.contenttypes.models import ContentType
 
-def complete_content(obj,content_field='content',images_field='images',files_field='files',name_field=None):
+def complete_content(obj,content_field='content',name_field=None):
 
     if getattr(obj,'is_html',False):
         return getattr(obj,content_field)
